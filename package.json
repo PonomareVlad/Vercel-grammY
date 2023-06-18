@@ -17,6 +17,10 @@
   "dependencies": {
     "grammy": "*"
   },
+  "exports": {
+    "build": "./build.mjs",
+    "edge": "./edge.mjs"
+  },
   "keywords": [
     "serverless",
     "telegram",
