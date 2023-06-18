@@ -14,12 +14,13 @@
   "bugs": {
     "url": "https://github.com/PonomareVlad/Vercel-grammY/issues"
   },
+  "exports": {
+    "./build": "./build.mjs",
+    "./edge": "./edge.mjs",
+    ".": "./index.mjs"
+  },
   "dependencies": {
     "grammy": "*"
-  },
-  "exports": {
-    "build": "./build.mjs",
-    "edge": "./edge.mjs"
   },
   "keywords": [
     "serverless",
