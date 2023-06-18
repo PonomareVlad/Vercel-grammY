@@ -1,0 +1,30 @@
+{
+  "license": "MIT",
+  "main": "index.mjs",
+  "name": "vercel-grammy",
+  "funding": "https://PonomareVlad.ru/donate",
+  "description": "Utilities for grammY on Vercel",
+  "homepage": "https://github.com/PonomareVlad/Vercel-grammY#readme",
+  "author": "Vladislav Ponomarev <PonomareVlad@users.noreply.github.com> (https://PonomareVlad.ru)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PonomareVlad/Vercel-grammY.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PonomareVlad/Vercel-grammY/issues"
+  },
+  "dependencies": {
+    "grammy": "*"
+  },
+  "keywords": [
+    "serverless",
+    "telegram",
+    "workers",
+    "worker",
+    "grammY",
+    "vercel",
+    "edge",
+    "bot",
+    "web"
+  ]
+}

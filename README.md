@@ -1,2 +1,3 @@
 # Vercel-grammY
-Utilities for @grammYJS on @Vercel
+
+Utilities for grammY on Vercel
