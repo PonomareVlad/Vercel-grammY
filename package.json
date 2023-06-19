@@ -15,8 +15,11 @@
     "url": "https://github.com/PonomareVlad/Vercel-grammY/issues"
   },
   "exports": {
+    "./build.mjs": "./build.mjs",
+    "./edge.mjs": "./edge.mjs",
     "./build": "./build.mjs",
     "./edge": "./edge.mjs",
+    "./*.mjs": "./*.mjs",
     ".": "./index.mjs"
   },
   "dependencies": {
