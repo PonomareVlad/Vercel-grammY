@@ -7,8 +7,8 @@ export const safeStart = (bot, {events = ["SIGTERM", "SIGINT"], ...options} = {}
     return bot.start(options);
 }
 
-export const setWebhook = (bot, {path, headers, prefix, header, fallback, ...other} = {}) => {
-    const url = getURL({path, headers, prefix, header, fallback});
+export const setWebhook = (bot, {host, path, headers, prefix, header, fallback, ...other} = {}) => {
+    const url = getURL({host, path, headers, prefix, header, fallback});
     return bot.api.setWebhook(url, other);
 }
 
@@ -16,7 +16,7 @@ export const setWebhookCallback = (bot, {catchErrors, allowEnvs = devEnvs, ...ot
     return async ({headers}, {json = jsonResponse}) => {
         try {
             if (!allowEnvs.includes(VERCEL_ENV)) return json({ok: false});
-            const ok = await setWebhook(bot, other);
+            const ok = await setWebhook(bot, {headers, ...other});
             return json({ok});
         } catch (e) {
             if (!catchErrors) throw e;
