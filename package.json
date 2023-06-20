@@ -1,7 +1,6 @@
 {
   "license": "MIT",
   "version": "0.0.6",
-  "main": "index.mjs",
   "name": "vercel-grammy",
   "funding": "https://PonomareVlad.ru/donate",
   "description": "Utilities for grammY on Vercel",
@@ -16,11 +15,11 @@
   },
   "exports": {
     "./build.mjs": "./build.mjs",
-    "./edge.mjs": "./edge.mjs",
     "./build": "./build.mjs",
-    "./edge": "./edge.mjs",
-    "./*.mjs": "./*.mjs",
-    ".": "./index.mjs"
+    ".": {
+      "browser": "./edge.mjs",
+      "default": "./index.mjs"
+    }
   },
   "dependencies": {
     "grammy": "*"
