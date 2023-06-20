@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "name": "vercel-grammy",
   "funding": "https://PonomareVlad.ru/donate",
   "description": "Utilities for grammY on Vercel",
