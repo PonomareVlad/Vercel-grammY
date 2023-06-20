@@ -1,6 +1,11 @@
+import {promisify} from "util";
+import {webhookCallback} from "grammy";
+
 export const devEnvs = ["development"];
 export const {VERCEL_ENV, VERCEL_URL} = process.env;
 export const isEdge = typeof EdgeRuntime === "string";
+
+export const wait = promisify((a, f) => setTimeout(f, a));
 
 export const safeStart = (bot, {events = ["SIGTERM", "SIGINT"], ...options} = {}) => {
     if (!isEdge) events.forEach(eventName => process.once(eventName, () => bot.stop()));
@@ -24,6 +29,22 @@ export const setWebhookCallback = (bot, {catchErrors, allowEnvs = devEnvs, ...ot
             return json(e);
         }
     }
+}
+
+export const webhookStream = (bot, {timeoutMilliseconds = 55_000, interval = 1000, chunk = ".", ...other} = {}) => {
+    const callback = webhookCallback(bot, "std/http", {timeoutMilliseconds, ...other});
+    return (...args) => new Response(new ReadableStream({
+        start: controller => {
+            const encoder = new TextEncoder();
+            const streamInterval = setInterval(() => {
+                controller.enqueue(encoder.encode(chunk));
+            }, interval);
+            return callback(...args).finally(() => {
+                clearInterval(streamInterval);
+                controller.close();
+            });
+        }
+    }));
 }
 
 export const jsonResponse = (value, {space, status, replacer, statusText, headers = {}} = {}) => {
