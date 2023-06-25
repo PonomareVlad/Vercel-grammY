@@ -1,0 +1,16 @@
+{
+  "include": [
+    "index.mjs"
+  ],
+  "compilerOptions": {
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "allowJs": true,
+    "declaration": true,
+    "declarationMap": true,
+    "removeComments": false,
+    "emitDeclarationOnly": true
+  }
+}
