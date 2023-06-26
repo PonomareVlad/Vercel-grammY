@@ -1,16 +1,27 @@
 {
   "include": [
-    "index.mjs"
+    "index.mts"
+  ],
+  "exclude": [
+    "node_modules"
   ],
   "compilerOptions": {
     "lib": [
       "DOM",
-      "ESNext"
+      "ES2019"
     ],
-    "allowJs": true,
+    "strict": true,
+    "newLine": "lf",
+    "target": "es2019",
     "declaration": true,
-    "declarationMap": true,
-    "removeComments": false,
-    "emitDeclarationOnly": true
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": true,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true
   }
 }
