@@ -4,7 +4,7 @@
   "main": "index.mjs",
   "types": "index.d.mts",
   "name": "vercel-grammy",
-  "version": "0.0.8-next.2",
+  "version": "0.1.0-rc.1",
   "funding": "https://PonomareVlad.ru/donate",
   "description": "Utilities for grammY on Vercel",
   "homepage": "https://github.com/PonomareVlad/Vercel-grammY#readme",
@@ -17,7 +17,8 @@
     "url": "https://github.com/PonomareVlad/Vercel-grammY/issues"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "grammy": "^1.17.0"

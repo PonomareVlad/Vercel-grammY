@@ -1,17 +1,17 @@
-import type {Bot} from "grammy";
-import type {AbortSignal} from "abort-controller";
-import type {Update} from "@grammyjs/types/update";
-import type {WebhookOptions} from "grammy/out/convenience/webhook";
 import {webhookCallback} from "grammy";
+
+import type {Bot, RawApi} from "grammy";
+import type {Other} from "grammy/out/core/api";
+import type {WebhookOptions} from "grammy/out/convenience/webhook";
 
 const {VERCEL_ENV, VERCEL_URL} = process.env as Record<string, string>;
 
 /**
  * Options for hostname
  */
-interface OptionsForHost {
+export interface OptionsForHost {
     /**
-     * Optional fallback hostname (`VERCEL_URL` by default)
+     * Optional fallback hostname (`process.env.VERCEL_URL` by default)
      */
     fallback?: string,
     /**
@@ -26,13 +26,13 @@ interface OptionsForHost {
 
 /**
  * This method generates a hostname from the options passed to it
- * @returns {string} Target hostname
+ * @returns Target hostname
  */
 export function getHost({
                             fallback = VERCEL_URL,
                             headers = new Headers(),
                             header = "x-forwarded-host"
-                        } = {} as OptionsForHost) {
+                        } = {} as OptionsForHost): string {
     return String((
         headers instanceof Headers ?
             headers?.get?.(header) :
@@ -43,30 +43,30 @@ export function getHost({
 /**
  * Options for URL
  */
-interface OptionsForURL extends OptionsForHost {
+export interface OptionsForURL extends OptionsForHost {
     /**
      * Optional hostname without protocol
      */
     host?: string,
     /**
-     * Optional absolute path after `/`
+     * Optional path to a function that receives updates
      */
     path?: string,
 }
 
 /**
  * This method generates a URL from the options passed to it
- * @returns {string} Target URL
+ * @returns Target URL
  */
 export function getURL({
                            host,
                            path = "api/update",
                            ...other
-                       } = {} as OptionsForURL) {
-    return new URL(`https://${host ?? getHost(other)}/${path}`).href;
+                       } = {} as OptionsForURL): string {
+    return new URL(path, `https://${host ?? getHost(other)}`).href;
 }
 
-interface OptionsForCallback extends OptionsForURL {
+export interface OptionsForWebhook extends OptionsForURL, Other<RawApi, "setWebhook", "url"> {
     /**
      * Optional strategy for handling errors
      */
@@ -75,34 +75,26 @@ interface OptionsForCallback extends OptionsForURL {
      * Optional list of environments where this method allowed
      */
     allowedEnvs?: string[],
-
-    // Rest options for bot.api.setWebhook method
-    signal?: AbortSignal,
-    secret_token?: string,
-    max_connections?: number,
-    drop_pending_updates?: boolean,
-    allowed_updates?: ReadonlyArray<Exclude<keyof Update, "update_id">>,
 }
 
 /**
  * Callback factory for grammY `bot.api.setWebhook` method
- * @returns {(req:Request) => Promise<Response>} Target callback method
+ * @returns Target callback method
  */
 export function setWebhookCallback(bot: Bot, {
     allowedEnvs = ["development"],
-    drop_pending_updates,
     onError = "throw",
-    max_connections,
-    allowed_updates,
-    secret_token,
-    signal,
+    fallback,
+    header,
+    host,
+    path,
     ...other
-} = {} as OptionsForCallback) {
-    return async ({headers} = {} as Request, {json = jsonResponse} = {}) => {
+} = {} as OptionsForWebhook): (req: Request) => Promise<Response> {
+    return async ({headers} = {} as Request, {json = jsonResponse} = {}): Promise<Response> => {
         try {
             if (!allowedEnvs.includes(VERCEL_ENV)) return json({ok: false});
-            const options = {drop_pending_updates, max_connections, allowed_updates, secret_token};
-            const ok = await bot.api.setWebhook(getURL({headers, ...other}), options, signal);
+            const url = getURL({headers, fallback, host, path, header});
+            const ok = await bot.api.setWebhook(url, other);
             return json({ok});
         } catch (e) {
             if (onError === "throw") throw e;
@@ -112,11 +104,11 @@ export function setWebhookCallback(bot: Bot, {
     }
 }
 
-interface OptionsForStream extends WebhookOptions {
+export interface OptionsForStream extends WebhookOptions {
     /**
      * Optional interval for writing chunks to stream
      */
-    interval?: number,
+    intervalMilliseconds?: number,
     /**
      * Optional content for chunks
      */
@@ -125,22 +117,22 @@ interface OptionsForStream extends WebhookOptions {
 
 /**
  * Callback factory for streaming webhook response
- * @returns {() => Response} Target callback method
+ * @returns Target callback method
  */
 export function webhookStream(bot: Bot, {
+    intervalMilliseconds = 1_000,
     timeoutMilliseconds = 55_000,
-    interval = 1000,
     chunk = ".",
     ...other
-} = {} as OptionsForStream) {
+} = {} as OptionsForStream): (req: Request) => Response {
     const callback = webhookCallback(bot, "std/http", {timeoutMilliseconds, ...other});
-    return (request: Request) => new Response(new ReadableStream({
+    return (req: Request) => new Response(new ReadableStream({
         start: controller => {
             const encoder = new TextEncoder();
             const streamInterval = setInterval(() => {
                 controller.enqueue(encoder.encode(chunk));
-            }, interval);
-            return callback(request).finally(() => {
+            }, intervalMilliseconds);
+            return callback(req).finally(() => {
                 clearInterval(streamInterval);
                 controller.close();
             });
@@ -148,14 +140,16 @@ export function webhookStream(bot: Bot, {
     }));
 }
 
-interface OptionsForJSON extends ResponseInit {
-    replacer?: (this: any, key: string, value: any) => any,
-    space?: string | number,
+export type StringifyJSON = Parameters<typeof JSON.stringify>;
+
+export interface OptionsForJSON extends ResponseInit {
+    replacer?: StringifyJSON[1]
+    space?: StringifyJSON[2]
 }
 
 /**
  * This method generates Response objects for JSON
- * @returns {Response} Target JSON Response
+ * @returns Target JSON Response
  */
 export function jsonResponse(value: any, {
     space,
@@ -163,7 +157,7 @@ export function jsonResponse(value: any, {
     replacer,
     statusText,
     headers = {},
-} = {} as OptionsForJSON) {
+} = {} as OptionsForJSON): Response {
     const body = JSON.stringify(value, replacer, space);
     return new Response(body, {
         headers: {
