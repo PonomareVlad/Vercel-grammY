@@ -67,19 +67,21 @@ export function getURL({
 }
 
 interface OptionsForCallback extends OptionsForURL {
-    allowed_updates?: ReadonlyArray<Exclude<keyof Update, "update_id">>,
-    drop_pending_updates?: boolean,
     /**
      * Optional strategy for handling errors
      */
     onError?: "throw" | "return",
-    max_connections?: number,
     /**
      * Optional list of environments where this method allowed
      */
     allowedEnvs?: string[],
-    secret_token?: string,
+
+    // Rest options for bot.api.setWebhook method
     signal?: AbortSignal,
+    secret_token?: string,
+    max_connections?: number,
+    drop_pending_updates?: boolean,
+    allowed_updates?: ReadonlyArray<Exclude<keyof Update, "update_id">>,
 }
 
 /**
