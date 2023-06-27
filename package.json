@@ -1,10 +1,10 @@
 {
   "license": "MIT",
   "type": "module",
+  "version": "0.1.0",
   "main": "index.mjs",
   "types": "index.d.mts",
   "name": "vercel-grammy",
-  "version": "0.1.0-rc.2",
   "funding": "https://PonomareVlad.ru/donate",
   "description": "Utilities for grammY on Vercel",
   "homepage": "https://github.com/PonomareVlad/Vercel-grammY#readme",
@@ -30,7 +30,10 @@
     "abort-controller": "^3.0.0"
   },
   "files": [
-    "index.*"
+    "LICENSE",
+    "index.*",
+    "*.json",
+    "*.md"
   ],
   "keywords": [
     "serverless",
