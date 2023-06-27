@@ -11,10 +11,6 @@ const {VERCEL_ENV, VERCEL_URL} = process.env as Record<string, string>;
  */
 export interface OptionsForHost {
     /**
-     * Optional fallback hostname (`process.env.VERCEL_URL` by default)
-     */
-    fallback?: string,
-    /**
      * Optional headers from incoming request
      */
     headers?: Headers | Record<string, string>,
@@ -22,6 +18,10 @@ export interface OptionsForHost {
      * Optional header name which contains the hostname
      */
     header?: string,
+    /**
+     * Optional fallback hostname (`process.env.VERCEL_URL` by default)
+     */
+    fallback?: string,
 }
 
 /**
@@ -49,7 +49,7 @@ export interface OptionsForURL extends OptionsForHost {
      */
     host?: string,
     /**
-     * Optional path to a function that receives updates
+     * Path to a function that receives updates
      */
     path?: string,
 }
@@ -60,12 +60,15 @@ export interface OptionsForURL extends OptionsForHost {
  */
 export function getURL({
                            host,
-                           path = "api/update",
+                           path = "",
                            ...other
                        } = {} as OptionsForURL): string {
     return new URL(path, `https://${host ?? getHost(other)}`).href;
 }
 
+/**
+ * Options for webhooks
+ */
 export interface OptionsForWebhook extends OptionsForURL, Other<RawApi, "setWebhook", "url"> {
     /**
      * Optional strategy for handling errors
@@ -104,15 +107,18 @@ export function setWebhookCallback(bot: Bot, {
     }
 }
 
+/**
+ * Options for stream
+ */
 export interface OptionsForStream extends WebhookOptions {
-    /**
-     * Optional interval for writing chunks to stream
-     */
-    intervalMilliseconds?: number,
     /**
      * Optional content for chunks
      */
     chunk?: string,
+    /**
+     * Optional interval for writing chunks to stream
+     */
+    intervalMilliseconds?: number,
 }
 
 /**
@@ -140,8 +146,15 @@ export function webhookStream(bot: Bot, {
     }));
 }
 
+/**
+ * Parameters from `JSON.stringify` method
+ */
 export type StringifyJSON = Parameters<typeof JSON.stringify>;
 
+/**
+ * Options for JSON response
+ * @public
+ */
 export interface OptionsForJSON extends ResponseInit {
     replacer?: StringifyJSON[1]
     space?: StringifyJSON[2]
