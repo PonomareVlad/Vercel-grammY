@@ -108,6 +108,32 @@ export function setWebhookCallback(bot: Bot, {
 }
 
 /**
+ * Parameters from `webhookCallback` method
+ */
+export type webhookCallbackParameters = Parameters<typeof webhookCallback>;
+
+/**
+ * Callback factory for grammY `webhookCallback` method with error catch
+ * @returns Target callback method
+ */
+export function safeWebhookCallback(
+    bot: webhookCallbackParameters[0],
+    adapter?: webhookCallbackParameters[1],
+    webhookOptions?: webhookCallbackParameters[2]
+): (req: Request, res: Response) => Promise<Response> {
+    return async (req: Request, res: Response): Promise<Response> => {
+        const {json = jsonResponse} = res;
+        try {
+            const callback = webhookCallback(bot, adapter, webhookOptions);
+            return await callback(req, res);
+        } catch (e) {
+            console.error(e);
+            return json(e);
+        }
+    }
+}
+
+/**
  * Options for stream
  */
 export interface OptionsForStream extends WebhookOptions {
