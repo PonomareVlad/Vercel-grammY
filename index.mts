@@ -4,7 +4,10 @@ import type {Bot, RawApi} from "grammy";
 import type {Other} from "grammy/out/core/api";
 import type {WebhookOptions} from "grammy/out/convenience/webhook";
 
-const {VERCEL_ENV, VERCEL_URL} = process.env as Record<string, string>;
+const {
+    VERCEL_URL = "localhost",
+    VERCEL_ENV = "development",
+} = process.env as Record<string, string>;
 
 /**
  * Options for hostname
