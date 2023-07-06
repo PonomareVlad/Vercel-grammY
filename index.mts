@@ -74,6 +74,10 @@ export function getURL({
  */
 export interface OptionsForWebhook extends OptionsForURL, Other<RawApi, "setWebhook", "url"> {
     /**
+     * Optional URL for webhooks
+     */
+    url?: string,
+    /**
      * Optional strategy for handling errors
      */
     onError?: "throw" | "return",
@@ -94,13 +98,14 @@ export function setWebhookCallback(bot: Bot, {
     header,
     host,
     path,
+    url,
     ...other
 } = {} as OptionsForWebhook): (req: Request) => Promise<Response> {
     return async ({headers} = {} as Request, {json = jsonResponse} = {}): Promise<Response> => {
         try {
             if (!allowedEnvs.includes(VERCEL_ENV)) return json({ok: false});
-            const url = getURL({headers, fallback, host, path, header});
-            const ok = await bot.api.setWebhook(url, other);
+            const webhookURL = url || getURL({headers, fallback, host, path, header});
+            const ok = await bot.api.setWebhook(webhookURL, other);
             return json({ok});
         } catch (e) {
             if (onError === "throw") throw e;

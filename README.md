@@ -239,8 +239,8 @@ This method generates a hostname from the options passed to it
 ### `getURL([options])`
 
 - `options` (`object`, optional) — Options for URL
-    - `host` (`string`, optional) — Hostname without protocol
     - `path` (`string`, optional) — Path to a function that receives updates
+    - `host` (`string`, optional) — Hostname without protocol (replaces `getHost` options)
     - `...options` (`object`, optional) — Options for [`getHost`](#gethostoptions)
 - returns `string` — Target URL
 
@@ -250,6 +250,7 @@ This method generates a URL from the options passed to it
 
 - `bot` (`Bot`, required) — grammY bot instance
 - `options` (`object`, optional) — Options for webhooks
+    - `url` (`string`, optional) — URL for webhooks (replaces `getURL` options)
     - `onError` (`"throw" | "return"`, optional) — Strategy for handling errors
     - `allowedEnvs` (`array`, optional) — List of environments where this method allowed
     - `...options` (`object`, optional) — Options
