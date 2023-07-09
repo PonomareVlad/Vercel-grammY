@@ -147,10 +147,10 @@ By default, [Vercel limits](https://vercel.com/docs/concepts/limits/overview) th
 - `10` seconds for [Serverless Functions](https://vercel.com/docs/concepts/functions/serverless-functions)
     - `60` seconds at Pro plan
     - `900` seconds at Enterprise plan
-- `30` seconds for [Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions)
+- `25` seconds for [Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions)
     - `1 000` seconds with [streaming response](https://vercel.com/docs/concepts/functions/edge-functions/streaming)
 
-So, without streaming (and paying) you can get up to `30` seconds with default
+So, without streaming (and paying) you can get up to `25` seconds with default
 [grammY](https://grammy.dev/guide/deployment-types.html#how-to-use-webhooks) `webhookCallback` adapter at
 [Edge Functions](https://vercel.com/docs/concepts/functions/edge-functions)
 
