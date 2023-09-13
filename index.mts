@@ -4,11 +4,6 @@ import type {Bot, RawApi} from "grammy";
 import type {Other} from "grammy/out/core/api";
 import type {WebhookOptions} from "grammy/out/convenience/webhook";
 
-const {
-    VERCEL_URL = "localhost",
-    VERCEL_ENV = "development",
-} = process.env as Record<string, string>;
-
 /**
  * Options for hostname
  */
@@ -32,7 +27,7 @@ export interface OptionsForHost {
  * @returns Target hostname
  */
 export function getHost({
-                            fallback = VERCEL_URL,
+                            fallback = process.env.VERCEL_URL || "localhost",
                             headers = new Headers(),
                             header = "x-forwarded-host"
                         } = {} as OptionsForHost): string {
@@ -103,7 +98,8 @@ export function setWebhookCallback(bot: Bot, {
 } = {} as OptionsForWebhook): (req: Request) => Promise<Response> {
     return async ({headers} = {} as Request, {json = jsonResponse} = {}): Promise<Response> => {
         try {
-            if (!allowedEnvs.includes(VERCEL_ENV)) return json({ok: false});
+            const env = process.env.VERCEL_ENV || "development";
+            if (!allowedEnvs.includes(env)) return json({ok: false});
             const webhookURL = url || getURL({headers, fallback, host, path, header});
             const ok = await bot.api.setWebhook(webhookURL, other);
             return json({ok});
