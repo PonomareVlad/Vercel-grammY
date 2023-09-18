@@ -28,13 +28,16 @@ export interface OptionsForHost {
  */
 export function getHost({
                             fallback = process.env.VERCEL_URL || "localhost",
-                            headers = new Headers(),
+                            headers = globalThis.Headers ? new Headers() : {},
                             header = "x-forwarded-host"
                         } = {} as OptionsForHost): string {
     return String((
-        headers instanceof Headers ?
+        (
+            globalThis.Headers &&
+            headers instanceof Headers
+        ) ?
             headers?.get?.(header) :
-            headers[header]
+            (headers as Record<string, string>)[header]
     ) ?? fallback);
 }
 
