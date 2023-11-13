@@ -27,7 +27,7 @@ export interface OptionsForHost {
  * @returns Target hostname
  */
 export function getHost({
-                            fallback = process.env.VERCEL_URL || "localhost",
+                            fallback = process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL || "localhost",
                             headers = globalThis.Headers ? new Headers() : {},
                             header = "x-forwarded-host"
                         } = {} as OptionsForHost): string {
