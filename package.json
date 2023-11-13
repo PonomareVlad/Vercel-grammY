@@ -28,7 +28,8 @@
     "@types/node": "^20.6.2",
     "@types/node-fetch": "^2.6.5",
     "abort-controller": "^3.0.0",
-    "grammy": "^1.18.3"
+    "grammy": "^1.18.3",
+    "typescript": "^5.2.2"
   },
   "files": [
     "LICENSE",
