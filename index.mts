@@ -16,7 +16,7 @@ export interface OptionsForHost {
    */
   header?: string
   /**
-   * Optional fallback hostname (`process.env.VERCEL_URL` by default)
+   * Optional fallback hostname
    */
   fallback?: string
 }
@@ -83,6 +83,10 @@ export interface OptionsForWebhook
    * Optional list of environments where this method allowed
    */
   allowedEnvs?: string[]
+  /**
+   * An optional string to compare to X-Telegram-Bot-Api-Secret-Token
+   */
+  secretToken?: Other<RawApi, 'setWebhook', 'url'>['secret_token']
 }
 
 /**
@@ -93,6 +97,7 @@ export function setWebhookCallback(
   bot: Bot,
   {
     allowedEnvs = ['development'],
+    secretToken: secret_token,
     onError = 'throw',
     fallback,
     header,
@@ -118,7 +123,10 @@ export function setWebhookCallback(
           path,
           header,
         })
-      const ok = await bot.api.setWebhook(webhookURL, other)
+      const ok = await bot.api.setWebhook(webhookURL, {
+        secret_token,
+        ...other,
+      })
       return json({ ok })
     } catch (e) {
       if (onError === 'throw') throw e
@@ -151,7 +159,7 @@ export function webhookStream(
   {
     intervalMilliseconds = 1_000,
     timeoutMilliseconds = 55_000,
-    chunk = '.',
+    chunk = ' ',
     ...other
   } = {} as OptionsForStream
 ): (req: Request) => Response {
